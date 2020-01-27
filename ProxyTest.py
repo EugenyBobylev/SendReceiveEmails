@@ -45,7 +45,7 @@ def get_attachments(service, user_id, msg_id, store_dir):
         print('An error occured: {exc}')
 
 
-def main():
+def get_service():
     """Shows basic usage of the Gmail API.
     Lists the user's Gmail labels.
     """
@@ -68,7 +68,10 @@ def main():
             pickle.dump(creds, token)
 
     service = build('gmail', 'v1', credentials=creds)
+    return service
 
+
+def get_all_income_emails(service):
     # Call the Gmail API
     results = service.users().labels().list(userId='me').execute()
     labels = results.get('labels', [])
@@ -91,4 +94,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    srv = get_service()
+    get_all_income_emails(srv)
