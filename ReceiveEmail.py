@@ -26,11 +26,16 @@ def parse_list_response(line: bytes):
 
 
 def listing_mailbox():
+    mail: imaplib.IMAP4_SSL= None
     try:
         mail = imaplib.IMAP4_SSL(SMTP_SERVER)
         mail.login(FROM_EMAIL, FROM_PWD)
         typ, data = mail.list()
+    except Exception as ex:
+        print(ex)
     finally:
+        if mail is None:
+            return
         mail.logout()
     print(f"Response code: {typ}")
     for line in data:
@@ -44,7 +49,6 @@ def read_email_from_gmail():
         mail.login(FROM_EMAIL, FROM_PWD)
 
         typ, data = mail.list()
-
 
         mail.select('inbox')
         data = mail.search(None, 'ALL')
