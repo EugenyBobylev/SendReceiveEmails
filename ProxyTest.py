@@ -14,7 +14,6 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 def get_message(service, user_id, msg_id):
     try:
         message = service.users().messages().get(userId=user_id, id=msg_id).execute()
-        print('Message snippet: %s' % message['snippet'])
         return message
     except errors.HttpError as ex:
         print(f'An error occurred: \"{ex}\"')
@@ -23,8 +22,8 @@ def get_message(service, user_id, msg_id):
 def get_mime_message(service, user_id, msg_id):
     try:
         message = service.users().messages().get(userId=user_id, id=msg_id, format='raw').execute()
-        print(f'Message snippet: {message["snippet"]}')
-        msg_str = base64.urlsafe_b64decode(message['raw'].encode('ASCII'))
+        print(f'{message["snippet"]}')
+        msg_str = base64.urlsafe_b64decode(message['raw'].encode('utf-8')).decode("utf-8")
         mime_msg = email.message_from_string(msg_str)
         return mime_msg
     except errors.HttpError as exc:
@@ -36,13 +35,14 @@ def get_attachments(service, user_id, msg_id, store_dir):
         message = service.users().messages().get(userId=user_id, id=msg_id).execute()
         for part in message['payload']['parts']:
             if part['filename']:
-                file_data = base64.urlsafe_b64decode(part['body']['data'].encode('UTF-8'))
+                body = part['body']
+                file_data = base64.urlsafe_b64decode(body['attachmentId'])
                 path = ''.join([store_dir, part['filename']])
-                f = open(path, 'w')
+                f = open(path, 'wb')
                 f.write(file_data)
                 f.close()
-    except Exception as exc:
-        print('An error occured: {exc}')
+    except Exception as ex:
+        print(f'An error occured: {ex}')
 
 
 def get_service():
@@ -89,10 +89,17 @@ def get_all_income_emails(service):
     else:
         print('Messages:')
         for message in messages:
-            msg = service.users().messages().get(userId='me', id=message['id']).execute()
-            print(msg['snippet'])
+            msg = get_message(service, user_id='me', msg_id=message['id'])
+            print(f"id= {msg['id']}; snippet= {msg['snippet']}")
 
 
 if __name__ == '__main__':
     srv = get_service()
-    get_all_income_emails(srv)
+    msg = get_message(srv, 'me', '16a9633d3c56ed50')
+    print(msg['snippet'])
+    get_attachments(srv, 'me', '16a9633d3c56ed50', '')
+
+    #mime_msg = get_mime_message(srv, 'me', '16a9633d3c56ed50')
+
+
+    #get_all_income_emails(srv)
