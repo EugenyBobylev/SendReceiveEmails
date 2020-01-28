@@ -62,6 +62,7 @@ def get_service():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
+            #flow = InstalledAppFlow.from_client_secrets_file('SendReceiveEmail-352a90d376f2.json', SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         with open('token.pickle', 'wb') as token:
@@ -95,11 +96,12 @@ def get_all_income_emails(service):
 
 if __name__ == '__main__':
     srv = get_service()
-    msg = get_message(srv, 'me', '16a9633d3c56ed50')
-    print(msg['snippet'])
-    get_attachments(srv, 'me', '16a9633d3c56ed50', '')
-
-    #mime_msg = get_mime_message(srv, 'me', '16a9633d3c56ed50')
-
-
     #get_all_income_emails(srv)
+
+    email_id = '16fe94817cda70f1'
+    #msg = get_message(srv, 'me', email_id)
+    #print(msg['snippet'])
+    get_attachments(srv, 'me', email_id, '')
+
+    #mime_msg = get_mime_message(srv, 'me', email_id)
+
