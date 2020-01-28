@@ -6,6 +6,7 @@ import pickle
 import os.path
 
 from apiclient import errors
+from email import encoders
 from email.mime.audio import MIMEAudio
 from email.mime.base import MIMEBase
 from email.mime.image import MIMEImage
@@ -104,7 +105,7 @@ def get_attach_mime(file):
     if content_type is None or encoding is not None:
         content_type = 'application/octet-stream'
     main_type, sub_type = content_type.split('/', 1)
-    if  main_type == 'text':
+    if main_type == 'text':
         fp = open(file, 'rb')
         msg = MIMEText(fp.read(), _subtype=sub_type)
         fp.close()
@@ -138,9 +139,10 @@ def create_message(sender, to, subject, text: str ) -> MIMEMultipart:
 
 
 def send_gmail(service, user_id, body: MIMEMultipart):
-    raw = base64.urlsafe_b64encode(body.as_bytes())
-    raw = raw.decode()
-    message = {'raw': raw}
+    message = encoders.encode_base64(body)
+    #raw = base64.urlsafe_b64encode(body.as_bytes())
+    #raw = raw.decode()
+    #message = {'raw': raw}
     try:
         message = (service.users().messages().send(userId=user_id, body=message).execute())
         return message
@@ -150,19 +152,20 @@ def send_gmail(service, user_id, body: MIMEMultipart):
 
 if __name__ == '__main__':
     send_to = 'beabooks@mail.ru'
-    subject = "Проверка отсылки письма с вложением"
+    subject = "Проверка отсылки письма с вложением."
     message = """
 Это электронное письмо было послано самому себе в исключительно отладочных целях.
 Оно может содержать какие-либо вложения как-то: двоичные файлы, изображения и т.д.
 PS. Отправка письма возможно была сделана через gmail api
 """
-    mail_msg = create_message('bobylev.e.a@gmail.com',send_to, subject, message)
     attach = 'ТЗ_на_xls.docx' # C:\\Users\\Bobylev\\Downloads\\
+
+    mail_msg = create_message('bobylev.e.a@gmail.com',send_to, subject, message)
     msg_attach = get_attach_mime(attach)
-    mail_msg.attach(msg_attach)
+    #mail_msg.attach(msg_attach)
 
     srv = get_service()
-    send_gmail(srv, 'me', mail_msg)
+    #send_gmail(srv, 'me', mail_msg)
 
     #get_all_income_emails(srv)
 
