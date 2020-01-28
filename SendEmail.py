@@ -13,7 +13,7 @@ COMMASPACE = ', '
 
 def get_plain_mimie(send_from, send_to: List[str], subject, message: str) -> MIMEMultipart:
     assert type(send_to) == list, 'send_to должен быть списком строк'
-    msg = MIMEMultipart('alternative')
+    msg = MIMEMultipart('mixed')
     msg.set_charset('utf-8')
     msg['From'] = f"Eugeny Bobylev <{send_from}>"
     msg['To'] = COMMASPACE.join(send_to)
