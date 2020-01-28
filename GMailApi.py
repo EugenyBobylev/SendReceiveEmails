@@ -21,6 +21,7 @@ from google.auth.transport.requests import Request
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
           'https://www.googleapis.com/auth/gmail.send']
 
+
 def get_message(service, user_id, msg_id):
     try:
         message = service.users().messages().get(userId=user_id, id=msg_id).execute()
@@ -128,7 +129,7 @@ def get_attach_mime(file):
     return msg
 
 
-def create_message(sender, to, subject, text: str ) -> MIMEMultipart:
+def create_message(sender, to, subject, text: str) -> MIMEMultipart:
     msg = MIMEMultipart('mixed')
     msg['Subject'] = subject
     msg['From'] = sender
@@ -137,10 +138,9 @@ def create_message(sender, to, subject, text: str ) -> MIMEMultipart:
     return msg
 
 
-
 def send_gmail(service, user_id, body: MIMEMultipart):
-    raw = base64.urlsafe_b64encode(body.as_bytes())
-    raw = raw.decode()
+    encoded_data = base64.urlsafe_b64encode(body.as_bytes())
+    raw = encoded_data.decode()
     message = {'raw': raw}
     try:
         message = (service.users().messages().send(userId=user_id, body=message).execute())
@@ -157,20 +157,21 @@ if __name__ == '__main__':
 Оно может содержать какие-либо вложения как-то: двоичные файлы, изображения и т.д.
 PS. Отправка письма возможно была сделана через gmail api
 """
-    mail_msg = create_message('bobylev.e.a@gmail.com',send_to, subject, message)
-    attach = 'ТЗ_на_xls.docx' # C:\\Users\\Bobylev\\Downloads\\
+    mail_msg = create_message('bobylev.e.a@gmail.com', send_to, subject, message)
+    attach = 'ТехнЗадание_на_xls.docx'
     msg_attach = get_attach_mime(attach)
     mail_msg.attach(msg_attach)
+    msg_image = get_attach_mime('МоеФото.jpg')
+    mail_msg.attach(msg_image)
 
     srv = get_service()
     send_gmail(srv, 'me', mail_msg)
 
-    #get_all_income_emails(srv)
+    # get_all_income_emails(srv)
 
-    #email_id = '16fe94817cda70f1'
-    #msg = get_message(srv, 'me', email_id)
-    #print(msg['snippet'])
-    #get_attachments(srv, 'me', email_id, '')
+    # email_id = '16fe94817cda70f1'
+    # msg = get_message(srv, 'me', email_id)
+    # print(msg['snippet'])
+    # get_attachments(srv, 'me', email_id, '')
 
-    #mime_msg = get_mime_message(srv, 'me', email_id)
-
+    # mime_msg = get_mime_message(srv, 'me', email_id)
