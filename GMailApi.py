@@ -6,6 +6,7 @@ import pickle
 import os.path
 
 from apiclient import errors
+from email import encoders
 from email.mime.audio import MIMEAudio
 from email.mime.base import MIMEBase
 from email.mime.image import MIMEImage
@@ -117,14 +118,14 @@ def get_attach_mime(file):
         msg = MIMEAudio(fp.read(), _subtype=sub_type)
         fp.close()
     else:
-        fp = open(file, 'rb')
         msg = MIMEBase(main_type, sub_type)
-        msg.set_payload(fp.read())
-        fp.close()
+        with open(file, 'rb') as f:
+            msg.set_payload(f.read())
+        encoders.encode_base64(msg)
+
     filename = os.path.basename(file)
     msg.add_header('Content-Disposition', 'attachment', filename=filename)
     return msg
-
 
 
 def create_message(sender, to, subject, text: str ) -> MIMEMultipart:
