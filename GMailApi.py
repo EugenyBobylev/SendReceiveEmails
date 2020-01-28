@@ -21,6 +21,7 @@ from google.auth.transport.requests import Request
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
           'https://www.googleapis.com/auth/gmail.send']
 
+
 def get_message(service, user_id, msg_id):
     try:
         message = service.users().messages().get(userId=user_id, id=msg_id).execute()
@@ -105,7 +106,7 @@ def get_attach_mime(file):
     if content_type is None or encoding is not None:
         content_type = 'application/octet-stream'
     main_type, sub_type = content_type.split('/', 1)
-    if main_type == 'text':
+    if  main_type == 'text':
         fp = open(file, 'rb')
         msg = MIMEText(fp.read(), _subtype=sub_type)
         fp.close()
@@ -118,17 +119,17 @@ def get_attach_mime(file):
         msg = MIMEAudio(fp.read(), _subtype=sub_type)
         fp.close()
     else:
-        fp = open(file, 'rb')
         msg = MIMEBase(main_type, sub_type)
-        msg.set_payload(fp.read())
-        fp.close()
+        with open(file, 'rb') as f:
+            msg.set_payload(f.read())
+        encoders.encode_base64(msg)
+
     filename = os.path.basename(file)
     msg.add_header('Content-Disposition', 'attachment', filename=filename)
     return msg
 
 
-
-def create_message(sender, to, subject, text: str ) -> MIMEMultipart:
+def create_message(sender, to, subject, text: str) -> MIMEMultipart:
     msg = MIMEMultipart('mixed')
     msg['Subject'] = subject
     msg['From'] = sender
@@ -137,12 +138,10 @@ def create_message(sender, to, subject, text: str ) -> MIMEMultipart:
     return msg
 
 
-
 def send_gmail(service, user_id, body: MIMEMultipart):
-    message = encoders.encode_base64(body)
-    #raw = base64.urlsafe_b64encode(body.as_bytes())
-    #raw = raw.decode()
-    #message = {'raw': raw}
+    encoded_data = base64.urlsafe_b64encode(body.as_bytes())
+    raw = encoded_data.decode()
+    message = {'raw': raw}
     try:
         message = (service.users().messages().send(userId=user_id, body=message).execute())
         return message
@@ -152,27 +151,27 @@ def send_gmail(service, user_id, body: MIMEMultipart):
 
 if __name__ == '__main__':
     send_to = 'beabooks@mail.ru'
-    subject = "Проверка отсылки письма с вложением."
+    subject = "Проверка отсылки письма с вложением"
     message = """
 Это электронное письмо было послано самому себе в исключительно отладочных целях.
 Оно может содержать какие-либо вложения как-то: двоичные файлы, изображения и т.д.
 PS. Отправка письма возможно была сделана через gmail api
 """
-    attach = 'ТЗ_на_xls.docx' # C:\\Users\\Bobylev\\Downloads\\
-
-    mail_msg = create_message('bobylev.e.a@gmail.com',send_to, subject, message)
+    mail_msg = create_message('bobylev.e.a@gmail.com', send_to, subject, message)
+    attach = 'ТехнЗадание_на_xls.docx'
     msg_attach = get_attach_mime(attach)
-    #mail_msg.attach(msg_attach)
+    mail_msg.attach(msg_attach)
+    msg_image = get_attach_mime('МоеФото.jpg')
+    mail_msg.attach(msg_image)
 
     srv = get_service()
-    #send_gmail(srv, 'me', mail_msg)
+    send_gmail(srv, 'me', mail_msg)
 
-    #get_all_income_emails(srv)
+    # get_all_income_emails(srv)
 
-    #email_id = '16fe94817cda70f1'
-    #msg = get_message(srv, 'me', email_id)
-    #print(msg['snippet'])
-    #get_attachments(srv, 'me', email_id, '')
+    # email_id = '16fe94817cda70f1'
+    # msg = get_message(srv, 'me', email_id)
+    # print(msg['snippet'])
+    # get_attachments(srv, 'me', email_id, '')
 
-    #mime_msg = get_mime_message(srv, 'me', email_id)
-
+    # mime_msg = get_mime_message(srv, 'me', email_id)
