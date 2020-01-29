@@ -1,0 +1,11 @@
+MIME Part
+
+mixed
+	alternative
+		text
+		related
+			html
+			inline image
+			inline image
+	attachment
+	attachment
