@@ -4,6 +4,7 @@ import email
 import mimetypes
 import pickle
 import os.path
+from typing import List
 
 from apiclient import errors
 from email import encoders
@@ -18,7 +19,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
 # If modifying these scopes, delete the file token.pickle.
-SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
+SCOPES = ['https://www.googleapis.com/auth/gmail.modify',
           'https://www.googleapis.com/auth/gmail.send']
 
 
@@ -28,6 +29,7 @@ def get_message(service, user_id, msg_id):
         return message
     except errors.HttpError as ex:
         print(f'An error occurred: \"{ex}\"')
+        return None
 
 
 def get_mime_message(service, user_id, msg_id):
@@ -56,6 +58,14 @@ def get_attachments(service, user_id, msg_id, store_dir):
         print(f'An error occured: {ex}')
 
 
+def modify_message(service, user_id, msg_id, msg_labels):
+  try:
+    message = service.users().messages().modify(userId=user_id, id=msg_id,  body=msg_labels).execute()
+    return message
+  except errors.HttpError as exc:
+    print(f'An error occurred: {exc}')
+
+
 def get_service():
     creds = None
     # The file token.pickle stores the user's access and refresh tokens, and is
@@ -79,16 +89,19 @@ def get_service():
     return service
 
 
-def get_all_income_emails(service):
-    # Call the Gmail API
-    results = service.users().labels().list(userId='me').execute()
-    labels = results.get('labels', [])
+def get_all_unread_emails(service) -> List[object]:
+    result = list()
+    results = service.users().messages().list(userId='me', labelIds=['INBOX', 'UNREAD']).execute()
+    messages = results.get('messages', [])
+    for message in messages:
+        msg = get_message(service, user_id='me', msg_id=message['id'])
+        if msg is not None:
+            result.append(msg)
+    return result
 
-    # Query the service object to get User Profile
-    userInfo = service.users().getProfile(userId='me').execute()
-    print("UserInfo is \n %s" % (userInfo))
 
-    # Call the Gmail API to fetch INBOX
+def get_all_income_emails(service) -> None:
+    # Call the Gmail API to fetch INBOX, UNREAD
     results = service.users().messages().list(userId='me', labelIds=['INBOX']).execute()
     messages = results.get('messages', [])
 
@@ -98,7 +111,8 @@ def get_all_income_emails(service):
         print('Messages:')
         for message in messages:
             msg = get_message(service, user_id='me', msg_id=message['id'])
-            print(f"id= {msg['id']}; snippet= {msg['snippet']}")
+            if 'UNREAD' in msg['labelIds']:
+                print(f"id= {msg['id']}; snippet= {msg['snippet']}")
 
 
 def get_attach_mime(file):
@@ -161,8 +175,8 @@ PS. Отправка письма возможно была сделана че�
     attach = 'ТехнЗадание_на_xls.docx'
     msg_attach = get_attach_mime(attach)
     mail_msg.attach(msg_attach)
-    msg_image = get_attach_mime('МоеФото.jpg')
-    mail_msg.attach(msg_image)
+    #msg_image = get_attach_mime('МоеФото.jpg')
+    #mail_msg.attach(msg_image)
 
     srv = get_service()
     send_gmail(srv, 'me', mail_msg)
