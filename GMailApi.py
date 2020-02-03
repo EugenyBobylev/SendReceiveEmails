@@ -100,19 +100,15 @@ def get_all_unread_emails(service) -> List[object]:
     return result
 
 
-def get_all_income_emails(service) -> None:
-    # Call the Gmail API to fetch INBOX, UNREAD
+def get_all_income_emails(service) -> List[object]:
+    result = list()
+    # Call the Gmail API to fetch INBOX
     results = service.users().messages().list(userId='me', labelIds=['INBOX']).execute()
     messages = results.get('messages', [])
-
-    if not messages:
-        print('No messages found.')
-    else:
-        print('Messages:')
-        for message in messages:
-            msg = get_message(service, user_id='me', msg_id=message['id'])
-            if 'UNREAD' in msg['labelIds']:
-                print(f"id= {msg['id']}; snippet= {msg['snippet']}")
+    for message in messages:
+        msg = get_message(service, user_id='me', msg_id=message['id'])
+        result.append(msg)
+    return result
 
 
 def get_attach_mime(file):
