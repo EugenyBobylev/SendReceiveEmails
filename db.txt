@@ -1,0 +1,39 @@
+
+Исполнители
+	ID
+	Фамилия
+	Имя
+	Отчество
+	e-mail
+
+Закажчики
+	ID
+	Фамилия
+	Имя
+	Отчество
+	e-mail
+
+Заказы
+	ID Исполнителя
+	ID Заказчика
+	URL исходного файла
+	URL обработанного файла
+	Тип расшифровки
+
+Person
+	ID				int			PK	not null
+	Name			string(255)		not null
+	Email			string(255)
+	Phone			string(64)
+	IsCustomer		bit
+	IsPerformer		bit
+	
+	
+
+Order
+	ID				int			PK
+	CustomerID		int			FK1
+	PerformerID		int			FK2
+	UrlSouce		string(255)
+	UrlResult		string(255)
+	Result			string(255)
