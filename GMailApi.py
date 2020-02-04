@@ -139,7 +139,7 @@ def get_attach_mime(file):
     return msg
 
 
-def create_message(sender, to, subject, text: str) -> MIMEMultipart:
+def create_mail(sender, to, subject, text: str) -> MIMEMultipart:
     msg = MIMEMultipart('mixed')
     msg['Subject'] = subject
     msg['From'] = sender
@@ -167,16 +167,14 @@ if __name__ == '__main__':
 Оно может содержать какие-либо вложения как-то: двоичные файлы, изображения и т.д.
 PS. Отправка письма возможно была сделана через gmail api
 """
-    mail_msg = create_message('bobylev.e.a@gmail.com', send_to, subject, message)
+    mail_msg = create_mail('bobylev.e.a@gmail.com', send_to, subject, message)
     attach = 'ТехнЗадание_на_xls.docx'
     msg_attach = get_attach_mime(attach)
     mail_msg.attach(msg_attach)
     #msg_image = get_attach_mime('МоеФото.jpg')
     #mail_msg.attach(msg_image)
-
     srv = get_service()
     send_gmail(srv, 'me', mail_msg)
-
     # get_all_income_emails(srv)
 
     # email_id = '16fe94817cda70f1'
