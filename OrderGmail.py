@@ -64,7 +64,7 @@ def create_standart_message(input_data) -> str:
 def create_sql_insert_message(user_str) -> str:
     msg = "Ошибка записи в Базу данных"
     result = repo.add_user(user_str)
-    if result['ok']== True:
+    if result['ok']:
         msg = f'успешное добавление в Базу данных \r\n'
         msg += f'{result["person"]}'
     return msg

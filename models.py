@@ -11,8 +11,11 @@ Base = declarative_base()
 def str_to_dict(data_str: str, dict_split=";", item_split="=") -> Dict:
     pairs: List[str] = data_str.split(dict_split)
     for i in range(len(pairs)):
-        pairs[i] = pairs[i].strip()  # удалить проеблы
-        pairs[i] = pairs[i].split(item_split)
+        pair = pairs[i];
+        pair = pair.strip()  # удалить проеблы
+        pair = pair.split(item_split) # разделить на пары key:value
+        pair[0] = pair[0].lower()
+        pairs[i] = pair
     d = {k: v for (k, v) in pairs}
     return d
 
