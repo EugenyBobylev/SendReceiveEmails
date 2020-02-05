@@ -63,7 +63,6 @@ def create_standart_message(input_data) -> str:
 
 def create_sql_insert_message(user_str) -> str:
     msg = "Ошибка записи в Базу данных"
-    repo = Repo()
     result = repo.add_user(user_str)
     if result['ok']== True:
         msg = f'успешное добавление в Базу данных \r\n'
@@ -95,15 +94,7 @@ def create_response(input_data: Dict) -> Dict:
 
 
 if __name__ == '__main__':
-    """    
-    test_email_data= {
-        'id' : '12345',
-        'from' : '<dotnetcoder@mail.ru>',
-        'subject' : 'Insert',
-        'snippet' : 'name="Бобылев Евгений"; phone=+79247401790; email=gomirka@mail.ru; is_customer=True'
-    }
-    response = create_response(test_email_data)
-    """
+    repo = Repo()
     while True:
         srv = get_service()
         all_email_data:List[Dict] = read_all_new_emails(srv)
