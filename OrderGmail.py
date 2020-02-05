@@ -2,6 +2,7 @@ from time import sleep
 from typing import List, Dict
 from GMailApi import get_service, get_all_unread_emails, modify_message, get_all_income_emails
 from GMailApi import create_mail, send_gmail
+from repo import Repo
 
 
 def mark_as_readed(service, msg_id) -> None:
@@ -51,12 +52,33 @@ def print_email_data(data: Dict) -> None:
           f"Subject=\"{data['subject']}\" message =\"{data['snippet']}\"")
 
 
-def create_output_message(input_data) -> str:
+def create_standart_message(input_data) -> str:
     msg = "Ваше сообщение получено и принято в работу! \r\n\r\n"
     msg += f"from={input_data['from']}\r\b"
     msg += f" date={input_data['date']}\r\b"
     msg += f"subject={input_data['subject']}\r\n"
     msg += f"text={input_data['snippet']}"
+    return msg
+
+
+def create_sql_insert_message(user_str) -> str:
+    msg = "Ошибка записи в Базу данных"
+    repo = Repo()
+    result = repo.add_user(user_str)
+    if result['ok']== True:
+        msg = f'успешное добавление в Базу данных \r\n'
+        msg += f'{result["person"]}'
+    return msg
+
+
+def create_output_message(input_data) -> str:
+    msg = ""
+    subject = input_data['subject']
+    snippet = input_data['snippet']
+    if subject == "Insert" or "insert":
+        msg = create_sql_insert_message(snippet)
+    else:
+        msg = create_standart_message(input_data)
     return msg
 
 
@@ -73,6 +95,15 @@ def create_response(input_data: Dict) -> Dict:
 
 
 if __name__ == '__main__':
+    """    
+    test_email_data= {
+        'id' : '12345',
+        'from' : '<dotnetcoder@mail.ru>',
+        'subject' : 'Insert',
+        'snippet' : 'name="Бобылев Евгений"; phone=+79247401790; email=gomirka@mail.ru; is_customer=True'
+    }
+    response = create_response(test_email_data)
+    """
     while True:
         srv = get_service()
         all_email_data:List[Dict] = read_all_new_emails(srv)

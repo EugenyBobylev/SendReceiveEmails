@@ -49,7 +49,11 @@ class Repo(object):
 
 
 repo = Repo();
-# str = "email=ohmanyukov@mail.ru;id=None; is_customer=True; is_performer=False; name=Ольга Охманюк; phone=+79246432292"
 str = 'name="Бобылев Евгений"; phone=+79247401790; email=gomirka@mail.ru; is_customer=True'
 result = repo.add_user(str)
 print(result['person'])
+
+str = "email=ohmanyukov@mail.ru;id=None; is_customer=True; is_performer=False; name=Ольга Охманюк; phone=+79246432292"
+result = repo.add_user(str)
+print(result['person'])
+

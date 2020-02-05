@@ -61,7 +61,7 @@ class Person(Base):
         data = str_to_dict(line)
         person = Person()
         person.id = str_to_int(parse('id'))
-        person.name = parse('name')
+        person.name = parse('name').replace("\"","")
         person.email = parse('email')
         person.phone = parse('phone')
         person.is_customer = parse('is_customer') == 'True'
