@@ -49,6 +49,8 @@ class Person(Base):
                 return None
 
         def str_to_int(value: str):
+            if value is None:
+                return None
             result = None
             try:
                 result = int(value)

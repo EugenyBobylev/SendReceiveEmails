@@ -6,20 +6,17 @@ from typing import Dict
 import sqlalchemy.orm
 from sqlalchemy import create_engine
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import FlushError
 
-from models import Person, Order, Base
-
+from models import Person, Base
 
 
 class Repo(object):
     def __init__(self):
         basedir = os.path.abspath(os.path.dirname(__file__))
-        #connStr = 'mysql+mysqlconnector://root:Ujvbhrf1557@localhost:3306/botdb'
+        # connStr = 'mysql+mysqlconnector://root:Ujvbhrf1557@localhost:3306/botdb'
         self.connStr = 'sqlite:///' + os.path.join(basedir, 'app.db')
         self.engine = create_engine(self.connStr, echo=False)
-        #Session = sessionmaker(bind=self.engine)
         self.session = self.create_session(self.engine)
         self.recreate_database()
 
@@ -50,7 +47,9 @@ class Repo(object):
         ok: bool = self.session_commit()
         return {'ok':ok, 'person':person}
 
+
 repo = Repo();
-str = "email=ohmanyukov@mail.ru;id=None; is_customer=True; is_performer=False; name=Ольга Охманюк; phone=+79246432292"
+# str = "email=ohmanyukov@mail.ru;id=None; is_customer=True; is_performer=False; name=Ольга Охманюк; phone=+79246432292"
+str = 'name="Бобылев Евгений"; phone=+79247401790; email=gomirka@mail.ru; is_customer=True'
 result = repo.add_user(str)
 print(result['person'])
