@@ -58,10 +58,12 @@ class Person(Base):
                 pass
             return result
 
+        line = line.replace("\"", "")
+        line = line.replace("&quot;", "")
         data = str_to_dict(line)
         person = Person()
         person.id = str_to_int(parse('id'))
-        person.name = parse('name').replace("\"","")
+        person.name = parse('name')
         person.email = parse('email')
         person.phone = parse('phone')
         person.is_customer = parse('is_customer') == 'True'
