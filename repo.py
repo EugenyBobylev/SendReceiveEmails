@@ -41,8 +41,7 @@ class Repo(object):
         Base.metadata.drop_all(self.engine)
         Base.metadata.create_all(self.engine)
 
-    def add_user(self, line: str) -> Dict:
-        person = Person.from_string(line)
+    def add_person(self, person) -> Dict:
         self.session.add(person)
         ok: bool = self.session_commit()
         return {'ok':ok, 'person':person}

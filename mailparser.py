@@ -1,5 +1,3 @@
-import base64
-from email import encoders
 from typing import Dict, List
 import re
 from models import Person
@@ -53,23 +51,28 @@ def prepare_person_data(dict: Dict[str, str]) -> Dict[str, object]:
 
 
 def get_person_from_text(text: str) -> Person:
-    person: Person = None
     if len(text) == 0:
-        return person
+        return None
     line = clean_str(text)
     data = str_to_dict(text)
-    if data is not None:
-        data = prepare_person_data(data)
-        person = Person()
-        person.id = data['id'] if 'id' in data else None
-        person.name = data['name']
-        person.email = data['email'] if 'email' in data else ''
-        person.phone = data['phone'] if 'phone' in data else ''
-        person.is_performer = data['is_performer'] if 'is_performer' in data else False
-        person.is_customer = data['is_customer'] if 'is_customer' in data else False
-        if not person.is_performer and not person.is_performer:
-            person.is_customer = True
+    if data is None:
+        return None
+    if 'name' not in data:
+        return None
+    if 'email' not in data:
+        return None
+    data = prepare_person_data(data)
+    person = Person()
+    person.id = data['id'] if 'id' in data else None
+    person.name = data['name']
+    person.email = data['email'] if 'email' in data else ''
+    person.phone = data['phone'] if 'phone' in data else ''
+    person.is_performer = data['is_performer'] if 'is_performer' in data else False
+    person.is_customer = data['is_customer'] if 'is_customer' in data else False
+    if not person.is_performer and not person.is_performer:
+        person.is_customer = True
     return person
+
 
 def create_persons_from_mail_data(data: str)-> List[Person]:
     persons = list()
@@ -93,16 +96,14 @@ def create_persons_from_mail_data(data: str)-> List[Person]:
 #print(decoded_str)
 
 str5 = """
-
 email:  ohmanyukov@mail.ru , id: None, is_customer: True, is_performer: None, name: Ольга Охманюк, phone: '+79246432292'
 name=\"Бобылев Евгений\"; phone=+79247401790; email=gomirka@mail.ru; is_customer=True
- 
 --
 Eugeny Bobylev
 """
-persons = create_persons_from_mail_data(str5)
-for p in persons:
-    print(p)
+#persons = create_persons_from_mail_data(str5)
+#for p in persons:
+#    print(p)
 
 #person2 = get_person_from_mail(str2)
 #print(person2)

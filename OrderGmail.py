@@ -79,11 +79,15 @@ def create_standart_message(input_data) -> str:
     return msg
 
 
-def create_sql_insert_message(user_str) -> str:
-    msg = "Ошибка записи в Базу данных"
-    result = get_person_from_mail(user_str) # repo.add_user(user_str)
-    if result['ok']:
-        msg = f'успешное добавление в Базу данных \r\n'
+def create_sql_insert_message(data_str) -> str:
+    msg = "Ошибка добавления в Базу данных \r\n"
+    persons = create_persons_from_mail_data(data_str) # repo.add_user(user_str)
+    for person in persons:
+        result = repo.add_person(person)
+        if result['ok']:
+            msg = f'успешное добавление в Базу данных \r\n'
+        else:
+            msg += 'Ошибка добавления в Базу данных \r\n'
         msg += f'{result["person"]}'
     return msg
 
@@ -119,8 +123,7 @@ if __name__ == '__main__':
         for email_data in all_email_data:
             response = create_response(email_data)
             print(f"to={response['to']}; subject={response['subject']}")
-#            mail_msg = create_mail(sender=response['from'],to=response['to'],
-#                                    subject=response['subject'],text=response['snippet'])
-#            send_gmail(srv,'me', mail_msg)
-#        sleep(12)
-        break
+            mail_msg = create_mail(sender=response['from'],to=response['to'],
+                                    subject=response['subject'],text=response['snippet'])
+            send_gmail(srv,'me', mail_msg)
+        sleep(12)
