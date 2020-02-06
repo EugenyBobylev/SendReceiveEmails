@@ -1,7 +1,9 @@
+import base64
 from time import sleep
 from typing import List, Dict
 from GMailApi import get_service, get_all_unread_emails, modify_message, get_all_income_emails
 from GMailApi import create_mail, send_gmail
+from mailparser import get_person_from_mail
 from repo import Repo
 
 
@@ -30,11 +32,19 @@ def read_all_emails(service) -> List:
         result.append(msg)
     return result
 
+def decode_mail_str(encoded_str: str) -> str:
+    decoded_bytes = base64.standard_b64decode(encoded_str)
+    decoded_str = decoded_bytes.decode('utf-8')
+    return decoded_str
 
-def parse_email(message) -> Dict:
+
+def parse_email(message) -> Dict[str, str]:
     result={'id':message['id'], 'snippet':message['snippet'],'from':'','to':'','subject':'', 'date':''}
     result['snippet'] = message['snippet']
     headers: List[Dict] = message['payload']['headers']
+    parts = message['payload']['parts']
+    encoded_data = parts[0]['body']['data']
+    decoded_data = decode_mail_str(encoded_data)
     for header in headers:
         if header['name'] == 'From':
             result['from'] = header['value']
@@ -63,7 +73,7 @@ def create_standart_message(input_data) -> str:
 
 def create_sql_insert_message(user_str) -> str:
     msg = "Ошибка записи в Базу данных"
-    result = repo.add_user(user_str)
+    result = get_person_from_mail(user_str) # repo.add_user(user_str)
     if result['ok']:
         msg = f'успешное добавление в Базу данных \r\n'
         msg += f'{result["person"]}'
@@ -82,12 +92,12 @@ def create_output_message(input_data) -> str:
 
 
 def create_response(input_data: Dict) -> Dict:
-    to:str = input_data['from']
+    to: str = input_data['from']
     to = to[to.index('<'):]
     result = {
-        'from':'bobylev.e.a@gmail.com',
-        'to':to,
-        'subject':f'Подтверждение входящего письма id={input_data["id"]}',
+        'from': 'bobylev.e.a@gmail.com',
+        'to': to,
+        'subject': f'Подтверждение входящего письма id={input_data["id"]}',
         'snippet': create_output_message(input_data)
     }
     return result
@@ -97,11 +107,13 @@ if __name__ == '__main__':
     repo = Repo()
     while True:
         srv = get_service()
-        all_email_data:List[Dict] = read_all_new_emails(srv)
+        all_email_data: List[Dict] = read_all_emails(srv)
         for email_data in all_email_data:
             response = create_response(email_data)
             mail_msg = create_mail(sender=response['from'],to=response['to'],
                                     subject=response['subject'],text=response['snippet'])
             send_gmail(srv,'me', mail_msg)
             print(f"to={response['to']}; subject={response['subject']}")
+            break
         sleep(12)
+        break

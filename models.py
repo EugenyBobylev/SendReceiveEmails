@@ -7,18 +7,6 @@ from sqlalchemy.orm import relationship
 Base = declarative_base()
 
 
-def str_to_dict(data_str: str, dict_split=";", item_split="=") -> Dict:
-    pairs: List[str] = data_str.split(dict_split)
-    for i in range(len(pairs)):
-        pair = pairs[i];
-        pair = pair.strip()  # удалить проеблы
-        pair = pair.split(item_split) # разделить на пары key:value
-        pair[0] = pair[0].lower()
-        pairs[i] = pair
-    d = {k: v for (k, v) in pairs}
-    return d
-
-
 class Person(Base):
     __tablename__ = 'persons'
 
@@ -41,37 +29,7 @@ class Person(Base):
         self.is_performer = False
 
     def __repr__(self):
-        return f'id={self.id}; name={self.name}; email={self.email}; phone={self.phone}'
-
-    def from_string(line: str) -> 'Person':
-        def parse(key: str):
-            if key in data:
-                return data[key]
-            else:
-                return None
-
-        def str_to_int(value: str):
-            if value is None:
-                return None
-            result = None
-            try:
-                result = int(value)
-            except ValueError:
-                pass
-            return result
-
-        line = line.replace("\"", "")
-        line = line.replace("&quot;", "")
-        data = str_to_dict(line)
-        person = Person()
-        person.id = str_to_int(parse('id'))
-        person.name = parse('name')
-        person.email = parse('email')
-        person.phone = parse('phone')
-        person.is_customer = parse('is_customer') == 'True'
-        person.is_performer = parse('is_performer') == 'True'
-        return person
-
+        return f'id={self.id}; name={self.name}; email={self.email}; phone={self.phone}; is_customer={self.is_customer}'
 
 class Order(Base):
     __tablename__ = "orders"
@@ -88,5 +46,3 @@ class Order(Base):
     def __repr__(self):
         return f'id={self.id}; customer={self.customer}; performer={self.performer}' \
                f'url_spurce={self.url_source}; url_result={self.url_result}'
-
-

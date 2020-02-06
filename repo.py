@@ -46,16 +46,3 @@ class Repo(object):
         self.session.add(person)
         ok: bool = self.session_commit()
         return {'ok':ok, 'person':person}
-
-
-#repo = Repo();
-#str = 'name="Бобылев Евгений"; phone=+79247401790; email=gomirka@mail.ru; is_customer=True'
-#str = "name=&quot;Бобылев Евгений&quot;; phone=+79247401790; email=gomirka@mail.ru; is_customer=True -- Eugeny Bobylev"
-#str = "Name=Ходос О.С.; email=bububu@mail.ru;phone=42622-4-01-22; is_performer=True"
-#result = repo.add_user(str)
-#print(result['person'])
-
-#str = "email=ohmanyukov@mail.ru;id=None; is_customer=True; is_performer=False; name=Ольга Охманюк; phone=+79246432292"
-#result = repo.add_user(str)
-#print(result['person'])
-
