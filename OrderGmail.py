@@ -33,10 +33,12 @@ def read_all_emails(service) -> List:
         result.append(msg)
     return result
 
+
 def decode_mail_str(encoded_str: str) -> str:
     decoded_bytes = base64.urlsafe_b64decode(encoded_str)
     decoded_str = decoded_bytes.decode('utf-8')
     return decoded_str
+
 
 def parse_mail_part(part)-> str:
     type = part["mimeType"]
@@ -47,6 +49,7 @@ def parse_mail_part(part)-> str:
         encoded_data = body['data']
         decoded_data = decode_mail_str(encoded_data)
     return decoded_data
+
 
 def parse_email(message) -> Dict[str, str]:
     result={'id':message['id'], 'snippet':message['snippet'],'from':'','to':'','subject':'', 'date':''}
@@ -119,11 +122,13 @@ if __name__ == '__main__':
     repo = Repo()
     while True:
         srv = get_service()
-        all_email_data: List[Dict] = read_all_emails(srv)
+        all_email_data: List[Dict] = read_all_new_emails(srv)
         for email_data in all_email_data:
             response = create_response(email_data)
             print(f"to={response['to']}; subject={response['subject']}")
-            mail_msg = create_mail(sender=response['from'],to=response['to'],
-                                    subject=response['subject'],text=response['snippet'])
+            mail_msg = create_mail(sender=response['from'],
+                                   to=response['to'],
+                                   subject=response['subject'],
+                                   text=response['snippet'])
             send_gmail(srv,'me', mail_msg)
         sleep(12)
