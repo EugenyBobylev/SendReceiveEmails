@@ -3,7 +3,8 @@ from time import sleep
 from typing import List, Dict
 from GMailApi import get_service, get_all_unread_emails, modify_message, get_all_income_emails
 from GMailApi import create_mail, send_gmail
-from mailparser import get_person_from_mail
+from mailparser import create_persons_from_mail_data
+from models import Person
 from repo import Repo
 
 
@@ -33,18 +34,25 @@ def read_all_emails(service) -> List:
     return result
 
 def decode_mail_str(encoded_str: str) -> str:
-    decoded_bytes = base64.standard_b64decode(encoded_str)
+    decoded_bytes = base64.urlsafe_b64decode(encoded_str)
     decoded_str = decoded_bytes.decode('utf-8')
     return decoded_str
 
+def parse_mail_part(part)-> str:
+    type = part["mimeType"]
+    if part["mimeType"] == 'multipart/alternative':
+        return parse_mail_part(part['parts'][0])
+    if type == 'text/html' or type == 'text/plain':
+        body = part['body']
+        encoded_data = body['data']
+        decoded_data = decode_mail_str(encoded_data)
+    return decoded_data
 
 def parse_email(message) -> Dict[str, str]:
     result={'id':message['id'], 'snippet':message['snippet'],'from':'','to':'','subject':'', 'date':''}
-    result['snippet'] = message['snippet']
+    snippet = message["snippet"]
+    result['snippet'] = parse_mail_part(message['payload'])
     headers: List[Dict] = message['payload']['headers']
-    parts = message['payload']['parts']
-    encoded_data = parts[0]['body']['data']
-    decoded_data = decode_mail_str(encoded_data)
     for header in headers:
         if header['name'] == 'From':
             result['from'] = header['value']
@@ -110,10 +118,9 @@ if __name__ == '__main__':
         all_email_data: List[Dict] = read_all_emails(srv)
         for email_data in all_email_data:
             response = create_response(email_data)
-            mail_msg = create_mail(sender=response['from'],to=response['to'],
-                                    subject=response['subject'],text=response['snippet'])
-            send_gmail(srv,'me', mail_msg)
             print(f"to={response['to']}; subject={response['subject']}")
-            break
-        sleep(12)
+#            mail_msg = create_mail(sender=response['from'],to=response['to'],
+#                                    subject=response['subject'],text=response['snippet'])
+#            send_gmail(srv,'me', mail_msg)
+#        sleep(12)
         break
