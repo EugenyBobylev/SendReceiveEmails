@@ -3,7 +3,6 @@ from typing import Dict, List
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Boolean, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-import json
 
 Base = declarative_base()
 
