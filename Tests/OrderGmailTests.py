@@ -1,6 +1,7 @@
 import unittest
 import OrderGmail
 from models import Person
+from repo import Repo
 
 
 class OrderGmailTests(unittest.TestCase):
@@ -21,7 +22,7 @@ class OrderGmailTests(unittest.TestCase):
         lines = message.splitlines()
         self.assertEqual(4, len(lines))
 
-    def test2_create_sql_insert_message(self):
+    def test_2_create_sql_insert_message(self):
         results = None
         message = OrderGmail.create_sql_insert_message(results)
         lines = message.splitlines()
@@ -37,7 +38,7 @@ class OrderGmailTests(unittest.TestCase):
         lines = message.splitlines()
         self.assertEqual(4, len(lines))
 
-    def test2_create_sql_update_message(self):
+    def test_2_create_sql_update_message(self):
         results = None
         message = OrderGmail.create_sql_update_message(results)
         lines = message.splitlines()
@@ -45,6 +46,15 @@ class OrderGmailTests(unittest.TestCase):
         self.assertEqual(1, len(lines))
         self.assertEqual('Ошибка обновления Базы данных', lines[0])
 
+    def test_insert_update_persons(self):
+        str1 = "name=Бобылев; is_performer=True"
+        str2 = "id=1; phone=+79247401790"
+        OrderGmail.repo = Repo()
+        results1 = OrderGmail.insert_persons(str1)
+        results2 = OrderGmail.update_persons(str2)
+
+        self.assertTrue(len(results1) == 1)
+        self.assertTrue(len(results2) == 1)
 
 if __name__ == '__main__':
     unittest.main()

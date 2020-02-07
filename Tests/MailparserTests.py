@@ -10,13 +10,16 @@ class MailparserTests(unittest.TestCase):
                      "name: Ольга Охманюк, phone: '+79246432292'"
         data2: str = "name=\"Бобылев Евгений\"; phone=+79247401790; email=gomirka@mail.ru; is_customer=True"
         data3: str = "email: ohmanyukov@mail.ru, id: None, is_customer: True, is_performer: None, name: Ольга Охманюк, phone: +79246432292 -- Eugeny Bobylev"
+        data4: str = "id=1; name=Бобылев; email=; phone=; is_customer=False"
         person1: Person = mailparser.get_person_from_text(data1)
         person2: Person = mailparser.get_person_from_text(data2)
         person3: Person = mailparser.get_person_from_text(data3)
+        person4: Person = mailparser.get_person_from_text(data4)
 
         self.assertIsNotNone(person1)
         self.assertIsNotNone(person2)
         self.assertIsNotNone(person3)
+        self.assertIsNotNone(person4)
 
     def test_key_value_string_parse(self):
         kv_string = " email: ohmanyukov@mail.ru "
@@ -36,6 +39,10 @@ Eugeny Bobylev
         persons = mailparser.create_persons_from_mail_data(str)
         self.assertEquals(2, len(persons))
 
+    def test_2_create_persons_from_mail_data(self):
+        str = "id=1; phone=+79247401790"
+        persons = mailparser.create_persons_from_mail_data(str)
+        self.assertEquals(1, len(persons))
 
 if __name__ == '__main__':
     unittest.main()

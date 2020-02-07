@@ -52,6 +52,8 @@ def prepare_person_data(dict: Dict[str, str]) -> Dict[str, object]:
             dict[key] = val in ["True", "true", "1", "Да", "да"]
     return dict
 
+def get_person_for_insert(text: str) -> Person
+
 
 def get_person_from_text(text: str) -> Person:
     if len(text) == 0:
@@ -60,7 +62,7 @@ def get_person_from_text(text: str) -> Person:
     data = str_to_dict(text)
     if len(data) < 1:
         return None
-    if 'name' not in data:
+    if ('id' not in data) and ('name' not in data):
         return None
     data = prepare_person_data(data)
     person = Person()

@@ -123,7 +123,7 @@ def create_output_message(input_data) -> str:
     msg = ""
     subject: str = input_data['subject']
     snippet: str = input_data['snippet']
-    if subject.lower() == "nsert":
+    if subject.lower() == "insert":
         results = insert_persons(snippet)
         msg = create_sql_insert_message(results)
     elif subject.lower() == "update":
