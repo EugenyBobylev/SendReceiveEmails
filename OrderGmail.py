@@ -106,6 +106,19 @@ def update_persons(data_str) -> List[Dict[bool, Person]]:
     return results
 
 
+def create_sql_update_message(results):
+    msg = "Ошибка обновления Базы данных"
+    if (results is not None) and len(results) > 0:
+        msg = ""
+        for result in results:
+            if result['ok']:
+                msg += f'Успешное обновление Базы данных \r\n'
+            else:
+                msg += 'Ошибка обновления Базы данных \r\n'
+            msg += f'{result["person"]} \r\n'
+    return msg
+
+
 def create_output_message(input_data) -> str:
     msg = ""
     subject: str = input_data['subject']
@@ -115,6 +128,7 @@ def create_output_message(input_data) -> str:
         msg = create_sql_insert_message(results)
     elif subject.lower() == "update":
         results = update_persons(snippet)
+        msg = create_sql_update_message(results)
     else:
         msg = create_standart_message(input_data)
     return msg
