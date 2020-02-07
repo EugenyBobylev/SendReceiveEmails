@@ -81,16 +81,21 @@ def create_standart_message(input_data) -> str:
     return msg
 
 
-def create_sql_insert_message(data_str) -> str:
-    msg = "Ошибка добавления в Базу данных \r\n"
+def insert_persons(data_str) -> List[Dict[bool, Person]]:
     persons = create_persons_from_mail_data(data_str)
-    for person in persons:
-        result = repo.add_person(person)
-        if result['ok']:
-            msg = f'успешное добавление в Базу данных \r\n'
-        else:
-            msg += 'Ошибка добавления в Базу данных \r\n'
-        msg += f'{result["person"]}'
+    results = repo.add_persons(persons)
+    return results
+
+
+def create_sql_insert_message(results) -> str:
+    msg = "Ошибка добавления в Базу данных \r\n"
+    if (results is not None) and len(results) > 0:
+        for result in results:
+            if result['ok']:
+                msg = f'Успешное добавление в Базу данных \r\n'
+            else:
+                msg += 'Ошибка добавления в Базу данных \r\n'
+            msg += f'{result["person"]} \r\n'
     return msg
 
 
@@ -99,7 +104,8 @@ def create_output_message(input_data) -> str:
     subject = input_data['subject']
     snippet = input_data['snippet']
     if subject == "Insert" or "insert":
-        msg = create_sql_insert_message(snippet)
+        results = insert_persons(snippet)
+        msg = create_sql_insert_message(results)
     else:
         msg = create_standart_message(input_data)
     return msg
@@ -125,7 +131,8 @@ if __name__ == '__main__':
         all_email_data: List[Dict] = read_all_new_emails(srv)
         for email_data in all_email_data:
             response = create_response(email_data)
-            print(f"to={response['to']}; subject={response['subject']}")
+            print(f"to={response['to']}; subject={response['subject']}\n"
+                  f"snippet={response['snippet']}")
             mail_msg = create_mail(sender=response['from'],
                                    to=response['to'],
                                    subject=response['subject'],

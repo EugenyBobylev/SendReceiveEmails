@@ -1,7 +1,7 @@
 # репозиторий для работы с БД
 import os
 from builtins import str
-from typing import Dict
+from typing import Dict, List
 
 import sqlalchemy.orm
 from sqlalchemy import create_engine
@@ -41,7 +41,14 @@ class Repo(object):
         Base.metadata.drop_all(self.engine)
         Base.metadata.create_all(self.engine)
 
-    def add_person(self, person) -> Dict:
+    def add_person(self, person) -> Dict[bool, Person]:
         self.session.add(person)
         ok: bool = self.session_commit()
-        return {'ok':ok, 'person':person}
+        return {'ok': ok, 'person': person}
+
+    def add_persons(self, persons: List[Person]) -> List[Dict[bool, Person]]:
+        results: List[Dict[bool, Person]] = list()
+        for person in persons:
+            result = self.add_person(person)
+            results.append(result)
+        return results

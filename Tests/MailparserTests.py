@@ -5,9 +5,6 @@ from models import Person
 
 
 class MailparserTests(unittest.TestCase):
-    def test_all_truth(self):
-        assert True
-
     def test_get_persons_from_text(self):
         data1: str = "email: ohmanyukov@mail.ru, Id: 1234, is_customer: True, is_performer: none, " \
                      "name: Ольга Охманюк, phone: '+79246432292'"

@@ -1,5 +1,7 @@
 import unittest
 import OrderGmail
+from models import Person
+
 
 class OrderGmailTests(unittest.TestCase):
     def test_decode_mail_str(self):
@@ -12,7 +14,20 @@ class OrderGmailTests(unittest.TestCase):
         self.assertEqual(source_str, decoded_str)
 
     def test_create_sql_insert_message(self):
-        assert True
+        result1 = {'ok': True, 'person': Person() }
+        result2 = {'ok': False, 'person': Person()}
+        results = [result1, result2]
+        message = OrderGmail.create_sql_insert_message(results)
+        lines = message.splitlines()
+        self.assertEqual(4, len(lines))
+
+    def test2_create_sql_insert_message(self):
+        results = None
+        message = OrderGmail.create_sql_insert_message(results)
+        lines = message.splitlines()
+
+        self.assertEqual(1, len(lines))
+        self.assertEqual('Ошибка добавления в Базу данных ', lines[0])
 
 
 if __name__ == '__main__':
