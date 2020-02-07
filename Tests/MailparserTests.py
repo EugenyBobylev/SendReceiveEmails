@@ -4,7 +4,7 @@ import mailparser
 from models import Person
 
 
-class mailparserTests(unittest.TestCase):
+class MailparserTests(unittest.TestCase):
     def test_all_truth(self):
         assert True
 
@@ -28,7 +28,6 @@ class mailparserTests(unittest.TestCase):
         self.assertTrue(2, len(result))
         self.assertEquals("email", result[0][0])
         self.assertEquals("ohmanyukov@mail.ru ", result[0][1])
-
 
 
 if __name__ == '__main__':
