@@ -108,11 +108,12 @@ def create_output_message(input_data) -> str:
 def create_response(input_data: Dict) -> Dict:
     to: str = input_data['from']
     to = to[to.index('<'):]
+    snippet = create_output_message(input_data)
     result = {
         'from': 'bobylev.e.a@gmail.com',
         'to': to,
         'subject': f'Подтверждение входящего письма id={input_data["id"]}',
-        'snippet': create_output_message(input_data)
+        'snippet': snippet
     }
     return result
 
