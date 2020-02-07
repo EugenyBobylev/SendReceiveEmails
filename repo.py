@@ -52,3 +52,19 @@ class Repo(object):
             result = self.add_person(person)
             results.append(result)
         return results
+
+    def update_person(self, person):
+        self.session.add(person)
+        ok: bool = self.session_commit()
+        return {'ok': ok, 'person': person}
+
+    def update_persons(self, persons):
+        results: List[Dict[bool, Person]] = list()
+        for person in persons:
+            result = self.update_person(person)
+            results.append(result)
+        return results
+
+    def get_person(self, id: int):
+        person = self.session.query(Person).get(id)
+        return person

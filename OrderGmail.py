@@ -100,13 +100,21 @@ def create_sql_insert_message(results) -> str:
     return msg
 
 
+def update_persons(data_str) -> List[Dict[bool, Person]]:
+    persons = create_persons_from_mail_data(data_str)
+    results = repo.update_persons(persons)
+    return results
+
+
 def create_output_message(input_data) -> str:
     msg = ""
-    subject = input_data['subject']
-    snippet = input_data['snippet']
-    if subject == "Insert" or "insert":
+    subject: str = input_data['subject']
+    snippet: str = input_data['snippet']
+    if subject.lower() == "nsert":
         results = insert_persons(snippet)
         msg = create_sql_insert_message(results)
+    elif subject.lower() == "update":
+        results = update_persons(snippet)
     else:
         msg = create_standart_message(input_data)
     return msg
