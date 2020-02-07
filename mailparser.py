@@ -58,11 +58,9 @@ def get_person_from_text(text: str) -> Person:
         return None
     line = clean_str(text)
     data = str_to_dict(text)
-    if len(data) < 2:
+    if len(data) < 1:
         return None
     if 'name' not in data:
-        return None
-    if 'email' not in data:
         return None
     data = prepare_person_data(data)
     person = Person()

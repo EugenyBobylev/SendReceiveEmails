@@ -27,7 +27,7 @@ class OrderGmailTests(unittest.TestCase):
         lines = message.splitlines()
 
         self.assertEqual(1, len(lines))
-        self.assertEqual('Ошибка добавления в Базу данных ', lines[0])
+        self.assertEqual('Ошибка добавления в Базу данных', lines[0])
 
 
 if __name__ == '__main__':

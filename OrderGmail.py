@@ -88,11 +88,12 @@ def insert_persons(data_str) -> List[Dict[bool, Person]]:
 
 
 def create_sql_insert_message(results) -> str:
-    msg = "Ошибка добавления в Базу данных \r\n"
+    msg = "Ошибка добавления в Базу данных"
     if (results is not None) and len(results) > 0:
+        msg = ""
         for result in results:
             if result['ok']:
-                msg = f'Успешное добавление в Базу данных \r\n'
+                msg += f'Успешное добавление в Базу данных \r\n'
             else:
                 msg += 'Ошибка добавления в Базу данных \r\n'
             msg += f'{result["person"]} \r\n'
