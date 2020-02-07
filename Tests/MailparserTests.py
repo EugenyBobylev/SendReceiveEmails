@@ -29,6 +29,16 @@ class MailparserTests(unittest.TestCase):
         self.assertEquals("email", result[0][0])
         self.assertEquals("ohmanyukov@mail.ru ", result[0][1])
 
+    def test_create_persons_from_mail_data(self):
+        str = """
+email:  ohmanyukov@mail.ru , id: None, is_customer: True, is_performer: None, name: Ольга Охманюк, phone: '+79246432292'
+name=\"Бобылев Евгений\"; phone=+79247401790; email=gomirka@mail.ru; is_customer=True
+--
+Eugeny Bobylev
+"""
+        persons = mailparser.create_persons_from_mail_data(str)
+        self.assertEquals(2, len(persons))
+
 
 if __name__ == '__main__':
     unittest.main()
