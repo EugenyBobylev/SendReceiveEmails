@@ -52,8 +52,7 @@ def parse_mail_part(part)-> str:
 
 
 def parse_email(message) -> Dict[str, str]:
-    result={'id':message['id'], 'snippet':message['snippet'],'from':'','to':'','subject':'', 'date':''}
-    snippet = message["snippet"]
+    result={'id': message['id'], 'snippet': message['snippet'], 'from': '', 'to': '', 'subject': '', 'date': ''}
     result['snippet'] = parse_mail_part(message['payload'])
     headers: List[Dict] = message['payload']['headers']
     for header in headers:
@@ -84,7 +83,7 @@ def create_standart_message(input_data) -> str:
 
 def create_sql_insert_message(data_str) -> str:
     msg = "Ошибка добавления в Базу данных \r\n"
-    persons = create_persons_from_mail_data(data_str) # repo.add_user(user_str)
+    persons = create_persons_from_mail_data(data_str)
     for person in persons:
         result = repo.add_person(person)
         if result['ok']:
@@ -130,5 +129,5 @@ if __name__ == '__main__':
                                    to=response['to'],
                                    subject=response['subject'],
                                    text=response['snippet'])
-            send_gmail(srv,'me', mail_msg)
+            send_gmail(srv, 'me', mail_msg)
         sleep(12)
