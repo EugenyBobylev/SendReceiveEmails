@@ -19,8 +19,8 @@ class Repo(object):
                (len(person.name.strip()) > 0)
 
     @staticmethod
-    def validate_update_person(person) -> bool:
-        return person.id is not None
+    def validate_update_person(person_data: Dict[str, object]) -> bool:
+        return 'id' in person_data
 
     def __init__(self):
         basedir = os.path.abspath(os.path.dirname(__file__))
@@ -65,20 +65,25 @@ class Repo(object):
             results.append(result)
         return results
 
-    def update_person(self, person):
-        if not Repo.validate_update_person(person):
-            return {'ok': False, 'person': person}
+    def update_person(self, person_data: Dict[str, object]):
+        if not Repo.validate_update_person(person_data):
+            return {'ok': False, 'person': person_data}
+        person = self.get_person(person_data['id'])
+
+        for key in person_data:
+            person.__dict__[key] = person_data[key]
+
         self.session.add(person)
         ok: bool = self.session_commit()
         return {'ok': ok, 'person': person}
 
-    def update_persons(self, persons):
+    def update_persons(self, persons_data: List[Dict]):
         results: List[Dict[bool, Person]] = list()
-        for person in persons:
-            result = self.update_person(person)
+        for person_data in persons_data:
+            result = self.update_person(person_data)
             results.append(result)
         return results
 
-    def get_person(self, id: int):
-        person = self.session.query(Person).get(id)
+    def get_person(self, person_id: int):
+        person = self.session.query(Person).get(person_id)
         return person

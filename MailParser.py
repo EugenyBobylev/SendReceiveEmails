@@ -54,22 +54,27 @@ def prepare_person_data(dict: Dict[str, str]) -> Dict[str, object]:
     return dict
 
 
-def create_person_from_dict(data_dict) -> Person:
+def create_person_data_from_string(text: str) -> Dict[str, object]:
+    if len(text) == 0:
+        return None
+    line = clean_str(text)
+    data = str_to_dict(line)
+    if len(data) < 1:   # пустой словарь
+        return None
+    data = prepare_person_data(data)
+    return data
+
+
+def create_person_from_data(person_data) -> Person:
     person = Person()
-    for key in data_dict:
-        person.__dict__[key] = data_dict[key]
+    for key in person_data:
+        person.__dict__[key] = person_data[key]
     return person
 
 
 def create_person_from_string(text: str) -> Person:
-    if len(text) == 0:
-        return None
-    line = clean_str(text)
-    data = str_to_dict(text)
-    if len(data) < 1:   # пустой словарь
-        return None
-    data = prepare_person_data(data)
-    person = create_person_from_dict(data)
+    data = create_person_data_from_string(text)
+    person = create_person_from_data(data)
     if not person.is_performer and not person.is_performer:
         person.is_customer = True
     return person

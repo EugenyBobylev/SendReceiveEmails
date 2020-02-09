@@ -3,7 +3,7 @@ from time import sleep
 from typing import List, Dict
 from GMailApi import get_service, get_all_unread_emails, modify_message, get_all_income_emails
 from GMailApi import create_mail, send_gmail
-from mailparser import create_persons_from_mail_data
+from MailParser import create_persons_from_mail_data
 from models import Person
 from repo import Repo
 
@@ -40,7 +40,7 @@ def decode_mail_str(encoded_str: str) -> str:
     return decoded_str
 
 
-def parse_mail_part(part)-> str:
+def parse_mail_part(part) -> str:
     type = part["mimeType"]
     if part["mimeType"] == 'multipart/alternative':
         return parse_mail_part(part['parts'][0])
@@ -156,9 +156,10 @@ if __name__ == '__main__':
             response = create_response(email_data)
             print(f"to={response['to']}; subject={response['subject']}\n"
                   f"snippet={response['snippet']}")
-            mail_msg = create_mail(sender=response['from'],
-                                   to=response['to'],
-                                   subject=response['subject'],
-                                   text=response['snippet'])
-            send_gmail(srv, 'me', mail_msg)
+#            mail_msg = create_mail(sender=response['from'],
+#                                   to=response['to'],
+#                                   subject=response['subject'],
+#                                   text=response['snippet'])
+#            send_gmail(srv, 'me', mail_msg)
+        break
         sleep(12)

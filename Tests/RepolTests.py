@@ -31,16 +31,16 @@ class RepoTests(unittest.TestCase):
     def test_update_person(self):
         person = Person()
         person.name = "Ольга"
-        result: Dict[bool, Person] = self.repo.add_person(person)
-        person = result['person']
-        person.email = 'olga@mail.ru'
-        person.phone = '+79247401790'
+        result_add: Dict[bool, Person] = self.repo.add_person(person)
+        self.assertTrue(result_add['ok'])
 
-        result2 = self.repo.update_person(person)
-        person2 = result['person']
+        person_data = {'id': person.id, 'email': 'xyz@contoso.com', 'phone': '+74262240149'}
+
+        result2 = self.repo.update_person(person_data)
+        person2 = result2['person']
         self.assertTrue(result2['ok'])
-        self.assertEqual('olga@mail.ru', person2.email)
-        self.assertEqual('+79247401790', person2.phone)
+        self.assertEqual('xyz@contoso.com', person2.email)
+        self.assertEqual('+74262240149', person2.phone)
 
     def test_get_non_exist_person(self):
         person = self.repo.get_person(0)
@@ -72,13 +72,11 @@ class RepoTests(unittest.TestCase):
         self.assertTrue(is_valid3)
 
     def test_validate_update_person(self):
-        invalid_person = Person()
-        invalid_person.name = 'Eugeny'
-        is_valid1 = Repo.validate_update_person(invalid_person)
+        invalid_data = {'name': 'Eugeny'}
+        is_valid1 = Repo.validate_update_person(invalid_data)
 
-        valid_person = Person()
-        valid_person.id = 123
-        is_valid2 = Repo.validate_update_person(valid_person)
+        valid_data = {'id': 123}
+        is_valid2 = Repo.validate_update_person(valid_data)
 
         self.assertFalse(is_valid1)
         self.assertTrue(is_valid2)
