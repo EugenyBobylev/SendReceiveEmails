@@ -31,6 +31,7 @@ class Person(Base):
     def __repr__(self):
         return f'id={self.id}; name={self.name}; email={self.email}; phone={self.phone}; is_customer={self.is_customer}'
 
+
 class Order(Base):
     __tablename__ = "orders"
 

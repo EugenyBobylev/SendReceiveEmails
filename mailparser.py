@@ -66,6 +66,8 @@ def create_person_from_string(text: str) -> Person:
         return None
     line = clean_str(text)
     data = str_to_dict(text)
+    if len(data) < 1:   # пустой словарь
+        return None
     data = prepare_person_data(data)
     person = create_person_from_dict(data)
     if not person.is_performer and not person.is_performer:
@@ -75,7 +77,8 @@ def create_person_from_string(text: str) -> Person:
 
 def split_input_text(txt: str) -> List[str]:
     strings = txt.split('\n')
-    for i in range(strings):  # delete empty strings
+    i = 0
+    while i < len(strings):  # delete empty strings
         if strings[i].strip() == "":
             strings.remove(strings[i])
             continue
