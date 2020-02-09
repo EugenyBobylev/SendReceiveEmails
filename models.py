@@ -25,7 +25,7 @@ class Person(Base):
         self.name = ''
         self.email = ''
         self.phone = ''
-        self.is_customer = False
+        self.is_customer = True
         self.is_performer = False
 
     def __repr__(self):

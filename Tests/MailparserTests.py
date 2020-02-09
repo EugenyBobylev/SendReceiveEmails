@@ -44,5 +44,13 @@ Eugeny Bobylev
         persons = mailparser.create_persons_from_mail_data(str)
         self.assertEquals(1, len(persons))
 
+    def test_create_person_from_dict(self):
+        person_dict = {'name': 'Евгений Бобылев', 'email': 'abc@mail.ru'}
+        person = mailparser.create_person_from_dict(person_dict)
+
+        self.assertEqual(person_dict['name'], person.name)
+        self.assertEqual(person_dict['email'], person.email)
+
+
 if __name__ == '__main__':
     unittest.main()

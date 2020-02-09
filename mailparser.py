@@ -2,6 +2,7 @@ from typing import Dict, List
 import re
 from models import Person
 
+
 def clean_str(value: str) -> str:
     value = value.replace("\"", "")
     value = value.replace("'","")
@@ -52,38 +53,41 @@ def prepare_person_data(dict: Dict[str, str]) -> Dict[str, object]:
             dict[key] = val in ["True", "true", "1", "Да", "да"]
     return dict
 
-def get_person_for_insert(text: str) -> Person
+
+def create_person_from_dict(data_dict) -> Person:
+    person = Person()
+    for key in data_dict:
+        person.__dict__[key] = data_dict[key]
+    return person
 
 
-def get_person_from_text(text: str) -> Person:
+def create_person_from_string(text: str) -> Person:
     if len(text) == 0:
         return None
     line = clean_str(text)
     data = str_to_dict(text)
-    if len(data) < 1:
-        return None
-    if ('id' not in data) and ('name' not in data):
-        return None
     data = prepare_person_data(data)
-    person = Person()
-    person.id = data['id'] if 'id' in data else None
-    person.name = data['name']
-    person.email = data['email'] if 'email' in data else ''
-    person.phone = data['phone'] if 'phone' in data else ''
-    person.is_performer = data['is_performer'] if 'is_performer' in data else False
-    person.is_customer = data['is_customer'] if 'is_customer' in data else False
+    person = create_person_from_dict(data)
     if not person.is_performer and not person.is_performer:
         person.is_customer = True
     return person
 
 
+def split_input_text(txt: str) -> List[str]:
+    strings = txt.split('\n')
+    for i in range(strings):  # delete empty strings
+        if strings[i].strip() == "":
+            strings.remove(strings[i])
+            continue
+        i += 1
+    return strings
+
+
 def create_persons_from_mail_data(data: str) -> List[Person]:
     persons = list()
-    lines = data.split('\n')
+    lines = split_input_text(data)
     for line in lines:
-        if line == "":
-            continue
-        person: Person = get_person_from_text(line)
+        person: Person = create_person_from_string(line)
         if person is not None:
             persons.append(person)
     return persons
