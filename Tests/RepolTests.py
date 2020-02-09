@@ -53,3 +53,32 @@ class RepoTests(unittest.TestCase):
 
         person1 = self.repo.get_person(1)
         self.assertEqual(1, person1.id)
+
+    def test_validate_add_person(self):
+        invalid_person1 = Person()
+        invalid_person1.id = 11
+        is_valid1: bool = Repo.validate_add_person(invalid_person1)
+
+        invalid_person2 = Person()
+        invalid_person2.email = "contoso@mail.ru"
+        is_valid2: bool = Repo.validate_add_person(invalid_person2)
+
+        valid_person = Person()
+        valid_person.name = 'Eugeny'
+        is_valid3: bool = Repo.validate_add_person(valid_person)
+
+        self.assertFalse(is_valid1)
+        self.assertFalse(is_valid2)
+        self.assertTrue(is_valid3)
+
+    def test_validate_update_person(self):
+        invalid_person = Person()
+        invalid_person.name = 'Eugeny'
+        is_valid1 = Repo.validate_update_person(invalid_person)
+
+        valid_person = Person()
+        valid_person.id = 123
+        is_valid2 = Repo.validate_update_person(valid_person)
+
+        self.assertFalse(is_valid1)
+        self.assertTrue(is_valid2)

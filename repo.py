@@ -12,6 +12,16 @@ from models import Person, Base
 
 
 class Repo(object):
+    @staticmethod
+    def validate_add_person(person) -> bool:
+        return (person.id is None) and \
+               (person.name is not None) and \
+               (len(person.name.strip()) > 0)
+
+    @staticmethod
+    def validate_update_person(person) -> bool:
+        return person.id is not None
+
     def __init__(self):
         basedir = os.path.abspath(os.path.dirname(__file__))
         # connStr = 'mysql+mysqlconnector://root:Ujvbhrf1557@localhost:3306/botdb'
@@ -42,6 +52,8 @@ class Repo(object):
         Base.metadata.create_all(self.engine)
 
     def add_person(self, person) -> Dict[bool, Person]:
+        if not Repo.validate_add_person(person):
+            return {'ok': False, 'person': person}
         self.session.add(person)
         ok: bool = self.session_commit()
         return {'ok': ok, 'person': person}
@@ -54,6 +66,8 @@ class Repo(object):
         return results
 
     def update_person(self, person):
+        if not Repo.validate_update_person(person):
+            return {'ok': False, 'person': person}
         self.session.add(person)
         ok: bool = self.session_commit()
         return {'ok': ok, 'person': person}
