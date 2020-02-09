@@ -3,7 +3,7 @@ from time import sleep
 from typing import List, Dict
 from GMailApi import get_service, get_all_unread_emails, modify_message, get_all_income_emails
 from GMailApi import create_mail, send_gmail
-from MailParser import create_persons_from_mail_data
+from MailParser import create_persons_from_mail_data, create_persons_data_from_string
 from models import Person
 from repo import Repo
 
@@ -101,8 +101,8 @@ def create_sql_insert_message(results) -> str:
 
 
 def update_persons(data_str) -> List[Dict[bool, Person]]:
-    persons = create_persons_from_mail_data(data_str)
-    results = repo.update_persons(persons)
+    persons_data = create_persons_data_from_string(data_str)
+    results = repo.update_persons(persons_data)
     return results
 
 
@@ -156,10 +156,9 @@ if __name__ == '__main__':
             response = create_response(email_data)
             print(f"to={response['to']}; subject={response['subject']}\n"
                   f"snippet={response['snippet']}")
-#            mail_msg = create_mail(sender=response['from'],
-#                                   to=response['to'],
-#                                   subject=response['subject'],
-#                                   text=response['snippet'])
-#            send_gmail(srv, 'me', mail_msg)
-        break
-        sleep(12)
+            mail_msg = create_mail(sender=response['from'],
+                                   to=response['to'],
+                                   subject=response['subject'],
+                                   text=response['snippet'])
+            send_gmail(srv, 'me', mail_msg)
+        sleep(15)

@@ -69,9 +69,15 @@ class Repo(object):
         if not Repo.validate_update_person(person_data):
             return {'ok': False, 'person': person_data}
         person = self.get_person(person_data['id'])
+        if person is None:
+            return {'ok': False, 'person': None, 'error': 'В БД нет объекта Person для обновления'}
 
         for key in person_data:
-            person.__dict__[key] = person_data[key]
+            if key == 'id':
+                continue
+            if hasattr(person, key):
+                value = person_data[key]
+                setattr(person, key, value)
 
         self.session.add(person)
         ok: bool = self.session_commit()

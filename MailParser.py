@@ -41,17 +41,17 @@ def str_to_int(value: str):
     return result
 
 
-def prepare_person_data(dict: Dict[str, str]) -> Dict[str, object]:
-    for key, val in dict.items():
+def prepare_person_data(data_dict: Dict[str, str]) -> Dict[str, object]:
+    for key, val in data_dict.items():
         if val in ["None", "none", ""]:
-            dict[key] = None
+            data_dict[key] = None
         if key == 'id' and val is not None:
-            dict[key] = str_to_int(val)
+            data_dict[key] = str_to_int(val)
         if key == 'is_customer':
-            dict[key] = val in ["True", "true", "1", "Да", "да"]
+            data_dict[key] = val in ["True", "true", "1", "Да", "да"]
         if key == 'is_performer':
-            dict[key] = val in ["True", "true", "1", "Да", "да"]
-    return dict
+            data_dict[key] = val in ["True", "true", "1", "Да", "да"]
+    return data_dict
 
 
 def create_person_data_from_string(text: str) -> Dict[str, object]:
@@ -65,15 +65,29 @@ def create_person_data_from_string(text: str) -> Dict[str, object]:
     return data
 
 
+def create_persons_data_from_string(text: str) -> List[Dict]:
+    lines = split_input_text(text)
+    persons_data = list()
+    for line in lines:
+        person_data = create_person_data_from_string(line)
+        if person_data is not None:
+            persons_data.append(person_data)
+    return persons_data
+
+
 def create_person_from_data(person_data) -> Person:
     person = Person()
     for key in person_data:
-        person.__dict__[key] = person_data[key]
+        if hasattr(person, key):
+            value = person_data[key]
+            setattr(person, key, value)
     return person
 
 
 def create_person_from_string(text: str) -> Person:
     data = create_person_data_from_string(text)
+    if data is None:
+        return None
     person = create_person_from_data(data)
     if not person.is_performer and not person.is_performer:
         person.is_customer = True
@@ -91,11 +105,13 @@ def split_input_text(txt: str) -> List[str]:
     return strings
 
 
-def create_persons_from_mail_data(data: str) -> List[Person]:
+def create_persons_from_mail_data(text: str) -> List[Person]:
     persons = list()
-    lines = split_input_text(data)
-    for line in lines:
-        person: Person = create_person_from_string(line)
+    persons_data = create_persons_data_from_string(text)
+    for person_data in persons_data:
+        person: Person = create_person_from_data(person_data)
+        if not person.is_performer and not person.is_performer:
+            person.is_customer = True
         if person is not None:
             persons.append(person)
     return persons

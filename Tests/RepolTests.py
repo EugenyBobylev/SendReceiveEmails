@@ -37,7 +37,7 @@ class RepoTests(unittest.TestCase):
         person_data = {'id': person.id, 'email': 'xyz@contoso.com', 'phone': '+74262240149'}
 
         result2 = self.repo.update_person(person_data)
-        person2 = result2['person']
+        person2 = self.repo.get_person(person.id)
         self.assertTrue(result2['ok'])
         self.assertEqual('xyz@contoso.com', person2.email)
         self.assertEqual('+74262240149', person2.phone)
