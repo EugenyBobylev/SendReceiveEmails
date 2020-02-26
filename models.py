@@ -1,7 +1,7 @@
 # Описание модели БД
 from typing import Dict, List
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Boolean, Integer, String, ForeignKey
+from sqlalchemy import Column, Boolean, DateTime, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
 Base = declarative_base()
@@ -46,4 +46,26 @@ class Order(Base):
 
     def __repr__(self):
         return f'id={self.id}; customer={self.customer}; performer={self.performer}' \
-               f'url_spurce={self.url_source}; url_result={self.url_result}'
+               f'url_source={self.url_source}; url_result={self.url_result}'
+
+
+class Client(Base):
+    __tablename__ = "clients"
+
+    id = Column("id", Integer, primary_key=True, autoincrement=False)
+    name = Column("name", String(255))
+    comment = Column("comment", String(512))
+    assigned_name = Column("assigned_name", String(255))
+    phone = Column("phone", Integer)
+    # avatar
+    region_id = Column("region_id", Integer)
+    country_id = Column("region_id", Integer)
+    first_client_message = Column("first_client_message", DateTime)
+    last_client_message = Column("last_client_message", DateTime)
+    extra_comment_1 = Column("extra_comment_1", String(512))
+    extra_comment_2 = Column("extra_comment_2", String(512))
+    extra_comment_3 = Column("extra_comment_3", String(512))
+
+    def __repr__(self):
+        return f'id={self.id}; name="{self.name}"; phone={self.phone}, ' \
+               f'assigned_name="{self.assigned_name}", comment={self.comment}'

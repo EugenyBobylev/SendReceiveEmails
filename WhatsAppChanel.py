@@ -49,7 +49,7 @@ def get_api_channels() -> object:
 
 # chat2client api all clients (GET)
 def get_api_all_clients() -> object:
-    url = "https://api.chat2desk.com/v1/clients"
+    url = "https://api.chat2desk.com/v1/clients?limit=200&offset=400"
     payload = {}
     headers = {'Authorization': token}
 
@@ -97,10 +97,10 @@ def post_api_client(phone, nick) -> object:
 
 
 # chat2desk change of clint
-def put_api_clients(client_id) -> object:
+def put_api_clients(client_id: int, client_data: dict) -> object:
     url = f"https://api.chat2desk.com/v1/clients/{client_id}"
 
-    payload = '{\n\t"nickname": "BobylevEA"\n}'
+    payload = json.dumps(client_data)
     headers = {
         'Authorization': token,
         'Content-Type': 'application/json',
@@ -143,9 +143,10 @@ data = None
 # data = get_api_all_clients()
 # data = get_api_channels()
 # data = post_api_client(phone=79246432292 ,nick='OlgaOh')
-# data = put_api_clients(client_id=96881373)
-# data = get_api_clients(client_id=105582161)
+# data = put_api_clients(client_id=96881373, client_data={"name": "EugenyBobylev"}) # EvgenyBobylev
+data = put_api_clients(client_id=105582161, client_data={"name": "OlgaOh", "comment": "Ольга Владимировна Охманюк"}) # OlgaOh
+data = get_api_clients(client_id=105582161)
 # data = get_api_clients_phone(79247401790)
-data = post_api_message(client_id=105582161, message='Здравствуйте Ольга Владимировна!')
+# data = post_api_message(client_id=105582161, message='Здравствуйте Ольга Владимировна!')
 # chanel_id = 19286
 print(data)
