@@ -12,8 +12,12 @@ def get_info() -> None:
     response = requests.request("GET", url, headers=headers, data=payload)
     print(response.text)
 
+def load_data_json():
+    __data__ = None
+    with open('c:/Users/Bobylev/My Documents/data.json', mode='r', encoding='utf-8') as f:
+        __data__ = json.load(f)
+    return __data__
 
-data = None
-with open('c:/Users/Bobylev/My Documents/data.json', mode='r', encoding='utf-8') as f:
-    data = json.load(f)
+
+data = load_data_json()
 print(data)
