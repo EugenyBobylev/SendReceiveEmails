@@ -1,15 +1,16 @@
 import requests
 import json
+token = '456c1286ccf71bfcd1bda342d92a70'
 
 
 # chat2desk api info
 def get_info() -> object:
     url = "https://api.chat2desk.com/v1/companies/api_info"
     payload = {}
-    headers = {'Authorization': '456c1286ccf71bfcd1bda342d92a70'}
+    headers = {'Authorization': token}
 
     response = requests.request("GET", url, headers=headers, data=payload)
-    __data__ = json.load(response) if response.ok else None
+    __data__ = json.loads(response.text) if response.ok else None
     return __data__
 
 
@@ -17,10 +18,21 @@ def get_info() -> object:
 def get_api_modes() -> object:
     url = "https://api.chat2desk.com/v1/companies/api_modes"
     payload = {}
-    headers = {'Authorization': '456c1286ccf71bfcd1bda342d92a70'}
+    headers = {'Authorization': token}
 
     response = requests.request("GET", url, headers=headers, data=payload)
-    __data__ = json.load(response) if response.ok else None
+    __data__ = json.loads(response.text) if response.ok else None
+    return __data__
+
+
+# chat2desk api channels (GET)
+def get_api_channels(phone) -> object:
+    url = f"https://api.chat2desk.com/v1/channels?phone={phone}"
+    payload = {}
+    headers = {'Authorization': token}
+
+    response = requests.request("GET", url, headers=headers, data=payload)
+    __data__ = json.loads(response.text) if response.ok else None
     return __data__
 
 
@@ -32,5 +44,5 @@ def load_data_json():
     return __data__
 
 
-api_modes = get_api_modes()
-print(api_modes)
+data = get_api_channels('79247401790')
+print(data)
