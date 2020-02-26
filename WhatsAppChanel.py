@@ -16,7 +16,7 @@ def get_info() -> object:
 
 # chat2desk api modes
 def get_api_modes() -> object:
-    url = "https://api.chat2desk.com/v1/companies/api_modes"
+    url = "https://api.chat2desk.com/v1/help/api_modes"
     payload = {}
     headers = {'Authorization': token}
 
@@ -25,14 +25,67 @@ def get_api_modes() -> object:
     return __data__
 
 
+# chat2client api transports (Get)
+def get_api_transports() -> object:
+    url = "https://api.chat2desk.com/v1/help/transports"
+    payload = {}
+    headers = {}
+
+    response = requests.request("GET", url, headers=headers, data=payload)
+    __data__ = json.loads(response.text) if response.ok else None
+    return __data__
+
+
 # chat2desk api channels (GET)
-def get_api_channels(phone) -> object:
-    url = f"https://api.chat2desk.com/v1/channels?phone={phone}"
+def get_api_channels() -> object:
+    url = "https://api.chat2desk.com/v1/channels"
     payload = {}
     headers = {'Authorization': token}
 
     response = requests.request("GET", url, headers=headers, data=payload)
     __data__ = json.loads(response.text) if response.ok else None
+    return __data__
+
+
+# chat2client api clients (GET)
+def get_api_clients() -> object:
+    url = "https://api.chat2desk.com/v1/clients"
+    payload = {}
+    headers = {'Authorization': token}
+
+    response = requests.request("GET", url, headers=headers, data=payload)
+    __data__ = json.loads(response.text) if response.ok else None
+    return __data__
+
+# chat2desk api create new client (POST)
+def post_api_client() -> object:
+    url = "https://api.chat2desk.com/v1/clients"
+
+    payload = '{\n\t"phone":79247401790,\n\t"transport":"viber_public"\n\t,"nickname":"EugenyBobylev"\n}'
+    headers = {
+        'Authorization': token,
+        'Content-Type': 'application/json',
+        'charset': 'UTF-8'
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload.encode('utf-8'))
+    __data__ = json.loads(response.text)
+    return __data__
+
+
+# chat2desk change of clint
+def put_api_clients(client_id) -> object:
+    url = f"https://api.chat2desk.com/v1/clients/{client_id}"
+
+    payload = '{\n\t"nickname": "BobylevEA"\n}'
+    headers = {
+        'Authorization': token,
+        'Content-Type': 'application/json',
+        'charset': 'UTF-8'
+    }
+
+    response = requests.request("PUT", url, headers=headers, data=payload.encode('utf-8'))
+    __data__ = json.loads(response.text)
     return __data__
 
 
@@ -44,5 +97,11 @@ def load_data_json():
     return __data__
 
 
-data = get_api_channels('79247401790')
+data = None
+# data = get_api_modes()
+#data = get_api_transports()
+#data = get_api_clients()
+# data = get_api_channels()
+# data = post_api_client()
+# data = put_api_clients(client_id=96881373)
 print(data)
